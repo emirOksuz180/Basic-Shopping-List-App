@@ -37,3 +37,11 @@
   cursor: pointer;
 
 }
+
+
+.shopping-list li[item-completed] .item-name {
+
+  text-decoration: line-through;
+  color: #999;
+
+}
