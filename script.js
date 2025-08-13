@@ -1,8 +1,17 @@
 
 const shoppingList = document.querySelector(".shopping-list");
 
+const shoppingForm = document.querySelector(".shopping-form");
+
+
+
 
 loadItems();
+
+
+shoppingForm.addEventListener("submit" , handleFormSubmit);
+
+
 
 function loadItems() {
 
@@ -27,9 +36,53 @@ function loadItems() {
 };
 
 
+function addItem(input) {
+
+  const newItem = createListItem({
+    
+    id: generateId(),
+    name :input.value,
+    completed : false
+
+  });
+
+  shoppingList.appendChild(newItem);
+
+
+  input.value = "";
+
+} 
+
+
+function generateId() {
+
+  return Date.now().toString;
+
+}
+
+
+function handleFormSubmit(e) {
+
+  e.preventDefault();
+
+  const input = document.getElementById("item_name");
+
+  if (input.value.trim().length === 0) {
+    
+    alert("yeni değer giriniz");
+    return;
+  }
+
+  addItem(input);
+
+
+}
+
+
+
 function createListItem(item) {
 
-  // checkbox
+  // chec5kbox
   const input = document.createElement("input");
   input.type = "checkbox";
   input.classList.add("form-check-input");
@@ -62,3 +115,4 @@ function createListItem(item) {
 
 }
  
+
