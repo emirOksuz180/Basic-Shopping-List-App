@@ -65,6 +65,9 @@ function addItem(input) {
 
   input.value = "";
 
+
+  upDateFilterItems();
+
 } 
 
 
@@ -101,6 +104,9 @@ function toggleCompleted(e) {
   li.toggleAttribute("item-completed" , e.target.checked);
 
   console.log(e.target.parentElement);
+
+  upDateFilterItems();
+
 
 }
 
@@ -202,5 +208,52 @@ function handleFilterSelection(e) {
   filterBtn.classList.add("btn-primary");
   filterBtn.classList.remove("btn-secondary");
 
+  filterItems(filterBtn.getAttribute("item-filter"));
+  
+
+
+}
+
+
+function filterItems(filterType) {
+
+  const li_items = document.querySelectorAll("li");
+
+  for(let li of li_items) {
+
+
+    li.classList.remove("d-block");
+    li.classList.remove("d-none");
+ 
+    const item_completed = li.hasAttribute("item-completed");
+    
+    if (filterType == "complete") {
+      //tamamlananlar gösterilecek
+      li.classList.toggle(item_completed ? "d-bloc" : "d-none");
+    } else if(filterType =="incomplete") {
+
+      // tamamlanmayanlar gösterilcek
+
+      li.classList.toggle(item_completed ?  "d-none" : "d-flex");
+
+
+
+    }else{
+
+      // hepsini göster
+
+      li.classList.toggle("d-flex");
+
+    }
+
+  }
+}
+
+
+function upDateFilterItems() {
+
+  const activeFilter = document.querySelector(".btn-primary[item-filter]");
+
+  filterItems(activeFilter.getAttribute("item-filter"));
 
 }
