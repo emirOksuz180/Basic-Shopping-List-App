@@ -2,21 +2,75 @@
 const shoppingList = document.querySelector(".shopping-list");
 const shoppingForm = document.querySelector(".shopping-form");
 const filterButtons = document.querySelectorAll(".filter-buttons button");
+const clearBtn = document.querySelector(".clear"); 
 
 
 document.addEventListener("DOMContentLoaded" , function () {
 
   loadItems();
 
+  displayAlert();
+
   shoppingForm.addEventListener("submit" , handleFormSubmit);
 
   for(let button of filterButtons) {
-
     button.addEventListener("click" , handleFilterSelection);
+  }
+
+  clearBtn.addEventListener("click" , clear);
+
+});
+
+
+function clear() {
+
+  shoppingList.innerHTML = "";
+  localStorage.clear("shoppingItems");
+  displayAlert();
+
+}
+
+
+function displayAlert() {
+  const isEmpty = shoppingList.querySelectorAll("li").length === 0;
+
+  const alert = document.querySelector(".alert");
+  const filterBtns = document.querySelector(".filter-buttons");
+
+  alert.classList.toggle("d-none" , !isEmpty);
+  clearBtn.classList.toggle("d-none" , isEmpty);
+  filterBtns.classList.toggle("d-none" , isEmpty);
+
+}
+
+
+
+
+
+
+
+
+function saveToLS() {
+
+  const listItems = shoppingList.querySelectorAll("li");
+
+  const list = [];
+
+  for(let li of listItems) {
+
+    const id = li.getAttribute("item-id");
+    const name = li.querySelector(".item-name").textContent;
+    const completed = li.hasAttribute("item-completed");
+
+
+    list.push({ id , name  , completed});
 
   }
 
-});
+  localStorage.setItem("shoppingItems" , JSON.stringify(list));
+
+
+}
 
 
 
@@ -29,23 +83,18 @@ document.addEventListener("DOMContentLoaded" , function () {
 
 function loadItems() {
 
-  const items = [
-
-    {id:1 , name : "Egg" , completed : false},
-    {id:2 , name : "Honey" , completed : true},
-    {id:3 , name : "Milk" , completed : false}
-
-  ];
-
-  shoppingList.innerHTML = "";
+  const items = JSON.parse(localStorage.getItem("shoppingItems")) || [];
+  shoppingList.innerHTML= "";
 
 
-  for(let item  of items) {
+  for(let item of items) {
 
     const li = createListItem(item);
     shoppingList.appendChild(li);
 
-  };
+  }
+
+  
 
 };
 
@@ -67,6 +116,9 @@ function addItem(input) {
 
 
   upDateFilterItems();
+
+  saveToLS();
+  displayAlert();
 
 } 
 
@@ -139,6 +191,7 @@ function createListItem(item) {
   // create li
 
   const li = document.createElement("li");
+  li.setAttribute("item-id" , item.id);
   li.className = "border rounded p-2 mb-1";
   li.toggleAttribute("item-completed" , item.completed);
 
@@ -157,6 +210,8 @@ function removeItem(e) {
 
   const li = e.target.parentElement;
   shoppingList.removeChild(li);
+  saveToLS();
+  displayAlert();
 
 
 }
@@ -178,6 +233,7 @@ function openEditMode(e) {
 function closeEditMode(e) {
 
   e.target.contentEditable = false;
+  saveToLS();
 
 }
 
